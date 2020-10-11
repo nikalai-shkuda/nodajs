@@ -1,5 +1,5 @@
 const User = require('../resources/users/user.model');
-const { TABLE_BOARD } = require('../common/constants');
+const { TABLE_BOARD, TABLE_USERS } = require('../common/constants');
 
 const initialUsers = [
   new User({ name: '1', login: 'aaa', password: 'sss' }),
@@ -8,7 +8,7 @@ const initialUsers = [
 ];
 
 const DB = {
-  users: [...initialUsers],
+  [TABLE_USERS]: [...initialUsers],
   [TABLE_BOARD]: []
 };
 
@@ -37,37 +37,7 @@ const updateEntity = (key, id, data) => {
   return getEntity(key, id);
 };
 
-const getUser = id => DB.users.find(user => user.id === id);
-
-const getAllUsers = () => DB.users || [];
-
-const createUser = user => {
-  DB.users.push(user);
-  return user;
-};
-
-const removeUser = id => {
-  const user = getUser(id);
-  if (user) {
-    DB.users.splice(DB.users.indexOf(user), 1);
-  }
-  return user;
-};
-
-const updateUser = (id, data) => {
-  const user = getUser(id);
-  if (user) {
-    DB.users[DB.users.indexOf(user)] = { ...user, ...data };
-  }
-  return getUser(id);
-};
-
 module.exports = {
-  createUser,
-  getAllUsers,
-  getUser,
-  removeUser,
-  updateUser,
   createEntity,
   getEntity,
   getAllEntities,

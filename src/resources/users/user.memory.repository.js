@@ -1,26 +1,27 @@
 const {
-  updateUser,
-  createUser,
-  getAllUsers,
-  getUser,
-  removeUser
+  updateEntity,
+  createEntity,
+  getAllEntities,
+  getEntity,
+  removeEntity
 } = require('../../common/DB');
+const { TABLE_USERS } = require('../../common/constants');
 
-const getAll = async () => getAllUsers();
+const getAll = async () => getAllEntities(TABLE_USERS);
 
-const get = async id => getUser(id);
+const get = async id => getEntity(TABLE_USERS, id);
 
 const create = async user => {
-  createUser(user);
-  return get(user.id);
+  createEntity(TABLE_USERS, user);
+  return getEntity(TABLE_USERS, user.id);
 };
 
 const remove = async id => {
-  removeUser(id);
+  removeEntity(TABLE_USERS, id);
 };
 
 const update = async (id, data) => {
-  updateUser(id, data);
+  updateEntity(TABLE_USERS, id, data);
   return get(id);
 };
 
