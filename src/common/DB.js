@@ -1,16 +1,30 @@
 const User = require('../resources/users/user.model');
-const { TABLE_BOARD, TABLE_USERS } = require('../common/constants');
-
-const initialUsers = [
-  new User({ name: '1', login: 'aaa', password: 'sss' }),
-  new User({ name: '2', login: '2sdvsd', password: 'dsdgsdgsd' }),
-  new User({ name: '3', login: '22sdgsdg', password: '3ddddd3' })
-];
+const Board = require('../resources/boards/board.model');
+const Task = require('../resources/tasks/task.model');
+const {
+  TABLE_BOARD,
+  TABLE_USERS,
+  TABLE_TASKS
+} = require('../common/constants');
 
 const DB = {
-  [TABLE_USERS]: [...initialUsers],
-  [TABLE_BOARD]: []
+  [TABLE_USERS]: [],
+  [TABLE_BOARD]: [],
+  [TABLE_TASKS]: []
 };
+
+// init DB with mock data
+(() => {
+  for (let i = 0; i < 4; i++) {
+    DB[TABLE_USERS].push(new User());
+  }
+  const board = new Board();
+  DB[TABLE_BOARD].push(board);
+  DB[TABLE_TASKS].push(
+    new Task({ boardId: board.id }),
+    new Task({ boardId: board.id })
+  );
+})();
 
 const createEntity = (key, entity) => {
   DB[key].push(entity);
