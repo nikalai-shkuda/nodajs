@@ -11,11 +11,11 @@ const remove = async id => {
   const board = await boardsRepo.remove(id);
   const tasks = await taskService.getAll();
 
-  tasks.forEach(task => {
-    if (task.boardId === board.id) {
+  tasks
+    .filter(task => task.boardId === board.id)
+    .forEach(task => {
       taskService.remove(task.id);
-    }
-  });
+    });
 
   return board;
 };

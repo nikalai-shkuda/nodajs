@@ -6,10 +6,19 @@ const {
   removeEntity
 } = require('../../common/DB');
 const { TABLE_TASKS } = require('../../common/constants');
+const { NotFoundError } = require('../../common/errorHandler');
 
 const getAll = async () => getAllEntities(TABLE_TASKS);
 
-const get = async id => getEntity(TABLE_TASKS, id);
+const get = async id => {
+  const task = await getEntity(TABLE_TASKS, id);
+
+  if (!task) {
+    throw new NotFoundError(`Couldn't find a task with id ${id}`);
+  }
+
+  return task;
+};
 
 const create = async task => {
   createEntity(TABLE_TASKS, task);
@@ -20,7 +29,7 @@ const remove = async id => {
   const task = await removeEntity(TABLE_TASKS, id);
 
   if (!task) {
-    throw new Error(`Couldn't find a task with id: ${id}`);
+    throw new NotFoundError(`Couldn't find a task with id: ${id}`);
   }
   return task;
 };
