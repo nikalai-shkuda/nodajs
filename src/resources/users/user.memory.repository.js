@@ -17,7 +17,8 @@ const create = async user => {
 };
 
 const remove = async id => {
-  removeEntity(TABLE_USERS, id);
+  const user = await removeEntity(TABLE_USERS, id);
+  return user;
 };
 
 const update = async (id, data) => {

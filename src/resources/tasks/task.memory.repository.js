@@ -22,6 +22,7 @@ const remove = async id => {
   if (!task) {
     throw new Error(`Couldn't find a task with id: ${id}`);
   }
+  return task;
 };
 
 const update = async (id, data) => {

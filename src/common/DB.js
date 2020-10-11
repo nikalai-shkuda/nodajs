@@ -21,8 +21,8 @@ const DB = {
   const board = new Board();
   DB[TABLE_BOARD].push(board);
   DB[TABLE_TASKS].push(
-    new Task({ boardId: board.id }),
-    new Task({ boardId: board.id })
+    new Task({ boardId: board.id, userId: DB[TABLE_USERS][0].id }),
+    new Task({ boardId: board.id, userId: DB[TABLE_USERS][2].id })
   );
 })();
 
