@@ -4,28 +4,27 @@ const tasksService = require('./task.service');
 
 router.route('/').get(async (req, res) => {
   const tasks = await tasksService.getAll();
-  res.json(tasks.map(Task.toResponse));
+  res.json(tasks.map(task => task.toClient()));
 });
 
 router.route('/').post(async (req, res) => {
-  console.log(1, req.params, req.body);
   const task = await tasksService.create(
     new Task({
       ...req.body,
       boardId: req.params.boardId
     })
   );
-  res.status(200).json(Task.toResponse(task));
+  res.status(200).json(task.toClient());
 });
 
 router.route('/:id').get(async (req, res) => {
   const task = await tasksService.get(req.params.id);
-  res.status(200).json(Task.toResponse(task));
+  res.status(200).json(task.toClient());
 });
 
 router.route('/:id').put(async (req, res) => {
   const task = await tasksService.update(req.params.id, req.body);
-  res.status(200).json(Task.toResponse(task));
+  res.status(200).json(task.toClient());
 });
 
 router.route('/:id').delete(async (req, res) => {

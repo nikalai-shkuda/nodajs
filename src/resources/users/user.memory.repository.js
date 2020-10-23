@@ -1,17 +1,17 @@
-const {
-  updateEntity,
-  createEntity,
-  getAllEntities,
-  getEntity,
-  removeEntity
-} = require('../../common/DB');
-const { TABLE_USERS } = require('../../common/constants');
 const { NotFoundError } = require('../../common/errorHandler');
+const User = require('./user.model');
 
-const getAll = async () => getAllEntities(TABLE_USERS);
+const getAll = async () => {
+  const users = await User.find({});
+
+  if (!users) {
+    throw new NotFoundError("Couldn't find a users");
+  }
+  return users;
+};
 
 const get = async id => {
-  const user = await getEntity(TABLE_USERS, id);
+  const user = await User.findById(id);
 
   if (!user) {
     throw new NotFoundError(`Couldn't find a user with id: ${id}`);
@@ -21,20 +21,21 @@ const get = async id => {
 };
 
 const create = async user => {
-  createEntity(TABLE_USERS, user);
-  return getEntity(TABLE_USERS, user.id);
+  const response = await User.create(user);
+  return response;
 };
 
 const remove = async id => {
-  const user = await removeEntity(TABLE_USERS, id);
-  if (!user) {
+  const status = (await User.deleteOne({ _id: id })).ok;
+
+  if (!status) {
     throw new NotFoundError(`Couldn't find a user with id: ${id}`);
   }
-  return user;
+  return status;
 };
 
 const update = async (id, data) => {
-  const updatedUser = await updateEntity(TABLE_USERS, id, data);
+  const updatedUser = (await User.updateOne({ _id: id }, data)).ok;
 
   if (!updatedUser) {
     throw new NotFoundError(`Couldn't find a user with id: ${id}`);

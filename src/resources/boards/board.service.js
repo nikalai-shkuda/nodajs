@@ -10,9 +10,10 @@ const getAll = () => boardsRepo.getAll();
 const remove = async id => {
   const board = await boardsRepo.remove(id);
   const tasks = await taskService.getAll();
+  const formatTasks = tasks.map(task => task.toClient());
 
-  tasks
-    .filter(task => task.boardId === board.id)
+  formatTasks
+    .filter(task => task.boardId === id)
     .forEach(task => {
       taskService.remove(task.id);
     });

@@ -10,10 +10,12 @@ const getAll = () => usersRepo.getAll();
 const remove = async id => {
   const user = await usersRepo.remove(id);
   const tasks = await taskService.getAll();
+  const formatTasks = tasks.map(task => task.toClient());
 
-  tasks.forEach(task => {
-    if (task.userId === user.id) {
-      taskService.update(task.id, { ...task, userId: null });
+  formatTasks.forEach(task => {
+    if (task.userId === id) {
+      task.userId = null;
+      taskService.update(task.id, task);
     }
   });
 

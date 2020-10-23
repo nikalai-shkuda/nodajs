@@ -1,17 +1,17 @@
-const {
-  updateEntity,
-  createEntity,
-  getAllEntities,
-  getEntity,
-  removeEntity
-} = require('../../common/DB');
-const { TABLE_BOARD } = require('../../common/constants');
 const { NotFoundError } = require('../../common/errorHandler');
+const Board = require('./board.model');
 
-const getAll = async () => getAllEntities(TABLE_BOARD);
+const getAll = async () => {
+  const boards = await Board.find({});
+
+  if (!boards) {
+    throw new NotFoundError("Couldn't find a boards");
+  }
+  return boards;
+};
 
 const get = async id => {
-  const board = await getEntity(TABLE_BOARD, id);
+  const board = await Board.findById(id);
 
   if (!board) {
     throw new NotFoundError(`Couldn't find a board with id: ${id}`);
@@ -21,22 +21,22 @@ const get = async id => {
 };
 
 const create = async board => {
-  createEntity(TABLE_BOARD, board);
-  return getEntity(TABLE_BOARD, board.id);
+  const response = await Board.create(board);
+  return response;
 };
 
 const remove = async id => {
-  const board = await removeEntity(TABLE_BOARD, id);
-  if (!board) {
+  const status = (await Board.deleteOne({ _id: id })).ok;
+  if (!status) {
     throw new NotFoundError(`Couldn't find a board with id: ${id}`);
   }
-  return board;
+  return status;
 };
 
 const update = async (id, data) => {
-  const board = await updateEntity(TABLE_BOARD, id, data);
+  const updatedBoard = (await Board.updateOne({ _id: id }, data)).ok;
 
-  if (!board) {
+  if (!updatedBoard) {
     throw new NotFoundError(`Couldn't find a board with id: ${id}`);
   }
 

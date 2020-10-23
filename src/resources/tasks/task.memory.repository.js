@@ -1,41 +1,47 @@
-const {
-  updateEntity,
-  createEntity,
-  getAllEntities,
-  getEntity,
-  removeEntity
-} = require('../../common/DB');
-const { TABLE_TASKS } = require('../../common/constants');
+const Task = require('./task.model');
 const { NotFoundError } = require('../../common/errorHandler');
 
-const getAll = async () => getAllEntities(TABLE_TASKS);
-
-const get = async id => {
-  const task = await getEntity(TABLE_TASKS, id);
+const getAll = async () => {
+  const task = await Task.find();
 
   if (!task) {
-    throw new NotFoundError(`Couldn't find a task with id ${id}`);
+    throw new NotFoundError("Couldn't find a tasks");
+  }
+
+  return task;
+};
+
+const get = async id => {
+  const task = await Task.findById(id);
+
+  if (!task) {
+    throw new NotFoundError(`Couldn't find a task with id: ${id}`);
   }
 
   return task;
 };
 
 const create = async task => {
-  createEntity(TABLE_TASKS, task);
-  return getEntity(TABLE_TASKS, task.id);
+  const response = await Task.create(task);
+  return response;
 };
 
 const remove = async id => {
-  const task = await removeEntity(TABLE_TASKS, id);
+  const status = (await Task.deleteOne({ _id: id })).ok;
 
-  if (!task) {
+  if (!status) {
     throw new NotFoundError(`Couldn't find a task with id: ${id}`);
   }
-  return task;
+  return status;
 };
 
 const update = async (id, data) => {
-  updateEntity(TABLE_TASKS, id, data);
+  const updatedTask = (await Task.updateOne({ _id: id }, data)).ok;
+
+  if (!updatedTask) {
+    throw new NotFoundError(`Couldn't find a task with id: ${id}`);
+  }
+
   return get(id);
 };
 
