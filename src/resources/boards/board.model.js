@@ -1,16 +1,28 @@
 const uuid = require('uuid');
+const mongoose = require('mongoose');
+const transtormIdFormat = require('../../utils/helpers');
 
-class Board {
-  constructor({ id = uuid(), title = 'BOARD', columns = [] } = {}) {
-    this.id = id;
-    this.title = title;
-    this.columns = columns;
+const boardSchema = new mongoose.Schema(
+  {
+    _id: {
+      type: String,
+      default: uuid
+    },
+    columns: {
+      type: Array,
+      default: []
+    },
+    title: {
+      type: String,
+      default: 'BOARD'
+    }
+  },
+  {
+    collection: 'boards',
+    versionKey: false
   }
+);
 
-  static toResponse(board) {
-    const { id, title, columns } = board;
-    return { id, title, columns };
-  }
-}
+boardSchema.method('toClient', transtormIdFormat);
 
-module.exports = Board;
+module.exports = mongoose.model('Board', boardSchema);
