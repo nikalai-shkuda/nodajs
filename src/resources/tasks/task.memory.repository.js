@@ -35,6 +35,8 @@ const remove = async id => {
   return status;
 };
 
+const removeByBoardId = async boardId => await Task.deleteMany({ boardId });
+
 const update = async (id, data) => {
   const updatedTask = (await Task.updateOne({ _id: id }, data)).ok;
 
@@ -45,4 +47,14 @@ const update = async (id, data) => {
   return get(id);
 };
 
-module.exports = { create, getAll, get, remove, update };
+const updateMany = async (filter, updates) => Task.updateMany(filter, updates);
+
+module.exports = {
+  create,
+  getAll,
+  get,
+  remove,
+  removeByBoardId,
+  update,
+  updateMany
+};

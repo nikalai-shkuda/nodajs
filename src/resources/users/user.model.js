@@ -1,5 +1,6 @@
 const uuid = require('uuid');
 const mongoose = require('mongoose');
+const transtormIdFormat = require('../../utils/helpers');
 
 const userSchema = new mongoose.Schema(
   {
@@ -21,15 +22,11 @@ const userSchema = new mongoose.Schema(
     }
   },
   {
+    collection: 'users',
     versionKey: false
   }
 );
 
-userSchema.methods.toResponse = user => {
-  const { id, name, login } = user;
-  return { id, name, login };
-};
+userSchema.method('toClient', transtormIdFormat);
 
-const User = mongoose.model('User', userSchema);
-
-module.exports = User;
+module.exports = mongoose.model('User', userSchema);

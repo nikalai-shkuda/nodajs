@@ -1,5 +1,6 @@
 const uuid = require('uuid');
 const mongoose = require('mongoose');
+const transtormIdFormat = require('../../utils/helpers');
 
 const taskSchema = new mongoose.Schema(
   {
@@ -33,21 +34,11 @@ const taskSchema = new mongoose.Schema(
     }
   },
   {
+    collection: 'tasks',
     versionKey: false
   }
 );
 
-function toClient() {
-  const obj = this.toObject();
+taskSchema.method('toClient', transtormIdFormat);
 
-  obj.id = obj._id;
-  delete obj._id;
-
-  return obj;
-}
-
-taskSchema.method('toClient', toClient);
-
-const Task = mongoose.model('Task', taskSchema);
-
-module.exports = Task;
+module.exports = mongoose.model('Task', taskSchema);

@@ -1,5 +1,6 @@
 const uuid = require('uuid');
 const mongoose = require('mongoose');
+const transtormIdFormat = require('../../utils/helpers');
 
 const boardSchema = new mongoose.Schema(
   {
@@ -17,21 +18,11 @@ const boardSchema = new mongoose.Schema(
     }
   },
   {
+    collection: 'boards',
     versionKey: false
   }
 );
 
-function toClient() {
-  const obj = this.toObject();
+boardSchema.method('toClient', transtormIdFormat);
 
-  obj.id = obj._id;
-  delete obj._id;
-
-  return obj;
-}
-
-boardSchema.method('toClient', toClient);
-
-const Board = mongoose.model('Board', boardSchema);
-
-module.exports = Board;
+module.exports = mongoose.model('Board', boardSchema);
