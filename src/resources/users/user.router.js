@@ -1,30 +1,41 @@
+const { OK, NO_CONTENT } = require('http-status-codes');
 const router = require('express').Router();
 const User = require('./user.model');
 const usersService = require('./user.service');
 
-router.route('/').get(async (req, res) => {
+router.get('/', async (req, res) => {
   const users = await usersService.getAll();
-  res.json(users.map(user => user.toClient()));
+  res.status(OK).json(users.map(user => user.toClient()));
 });
 
-router.route('/').post(async (req, res) => {
-  const user = await usersService.create(new User({ ...req.body }));
-  res.status(200).json(user.toClient());
+router.post('/', async (req, res) => {
+  try {
+    const candidate = await User.findOne({ login: req.body.login });
+
+    if (candidate) {
+      return res.status(400).json({ message: 'This user already exists' });
+    }
+
+    const user = await usersService.create(new User({ ...req.body }));
+    res.status(OK).json(user.toClient());
+  } catch (e) {
+    res.status(500).json({ message: 'Sorry...' });
+  }
 });
 
-router.route('/:id').get(async (req, res) => {
+router.get('/:id', async (req, res) => {
   const user = await usersService.get(req.params.id);
-  res.status(200).json(user.toClient());
+  res.status(OK).json(user.toClient());
 });
 
-router.route('/:id').put(async (req, res) => {
+router.put('/:id', async (req, res) => {
   const user = await usersService.update(req.params.id, req.body);
-  res.status(200).json(user.toClient());
+  res.status(OK).json(user.toClient());
 });
 
-router.route('/:id').delete(async (req, res) => {
+router.delete('/:id', async (req, res) => {
   await usersService.remove(req.params.id);
-  res.status(200).json(`User ${req.params.id} deleted successfully`);
+  res.status(NO_CONTENT).json(`User ${req.params.id} deleted successfully`);
 });
 
 module.exports = router;

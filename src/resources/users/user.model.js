@@ -1,8 +1,9 @@
 const uuid = require('uuid');
-const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const { model, Schema } = require('mongoose');
 const transtormIdFormat = require('../../utils/helpers');
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
   {
     _id: {
       type: String,
@@ -10,7 +11,9 @@ const userSchema = new mongoose.Schema(
     },
     login: {
       type: String,
-      default: 'user'
+      default: 'user',
+      required: true,
+      unique: true
     },
     name: {
       type: String,
@@ -18,7 +21,8 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      default: 'P@55w0rd'
+      default: 'P@55w0rd',
+      required: true
     }
   },
   {
@@ -26,7 +30,14 @@ const userSchema = new mongoose.Schema(
     versionKey: false
   }
 );
+/* eslint space-before-function-paren: ["error", "never"]*/
+/* eslint-env es6*/
+userSchema.pre('save', async function(next) {
+  this.password = await bcrypt.hash(this.password, 12);
+
+  next();
+});
 
 userSchema.method('toClient', transtormIdFormat);
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = model('User', userSchema);

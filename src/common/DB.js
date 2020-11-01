@@ -4,8 +4,14 @@ const User = require('../resources/users/user.model');
 const Board = require('../resources/boards/board.model');
 const Task = require('../resources/tasks/task.model');
 
+const admin = new User({
+  name: 'Admin',
+  login: 'admin',
+  password: 'admin'
+});
+
 const boards = [new Board()];
-const users = [new User(), new User(), new User()];
+const users = [admin, new User(), new User(), new User()];
 const tasks = [
   new Task({ boardId: boards[0].id, userId: users[0].id }),
   new Task({ boardId: boards[0].id, userId: users[1].id })
@@ -14,7 +20,8 @@ const tasks = [
 module.exports.connectToDB = cb => {
   mongoose.connect(MONGO_CONNECTION_STRING, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useCreateIndex: true
   });
 
   const db = mongoose.connection;
