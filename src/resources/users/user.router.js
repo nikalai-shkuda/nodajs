@@ -9,18 +9,14 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  try {
-    const candidate = await User.findOne({ login: req.body.login });
+  const candidate = await User.findOne({ login: req.body.login });
 
-    if (candidate) {
-      return res.status(400).json({ message: 'This user already exists' });
-    }
-
-    const user = await usersService.create(new User({ ...req.body }));
-    res.status(OK).json(user.toClient());
-  } catch (e) {
-    res.status(500).json({ message: 'Sorry...' });
+  if (candidate) {
+    return res.status(400).json({ message: 'This user already exists' });
   }
+
+  const user = await usersService.create(new User({ ...req.body }));
+  res.status(OK).json(user.toClient());
 });
 
 router.get('/:id', async (req, res) => {
