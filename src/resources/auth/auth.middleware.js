@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
 
     if (!token) {
-      res.status(401).json({ message: 'Нет авторизации' });
+      res.status(401).json({ message: 'Unauthorized user!' });
     }
 
     const decoded = jwt.verify(token, JWT_SECRET_KEY);
@@ -18,6 +18,6 @@ module.exports = (req, res, next) => {
 
     return next();
   } catch (e) {
-    res.status(401).json({ message: 'Нет авторизации' });
+    res.status(401).json({ message: 'Unauthorized user!' });
   }
 };

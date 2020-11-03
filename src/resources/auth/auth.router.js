@@ -1,38 +1,14 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { JWT_SECRET_KEY } = require('../../common/config');
 const router = require('express').Router();
-const User = require('../users/user.model');
+const { signToken } = require('./auth.service');
 
 router.post('/', async (req, res) => {
-  try {
-    const { login, password } = req.body;
-    const user = await User.findOne({ login });
+  const { login, password } = req.body;
+  const token = await signToken(login, password);
 
-    if (!user) {
-      return res.status(403).json({ message: 'This user was not found' });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Wrong password' });
-    }
-
-    const token = jwt.sign(
-      {
-        userId: user._id,
-        login: user.login
-      },
-      JWT_SECRET_KEY,
-      {
-        expiresIn: '1h'
-      }
-    );
-
+  if (token) {
     res.status(200).json({ token });
-  } catch (e) {
-    res.status(500).json({ message: 'Sorry...' });
+  } else {
+    res.status(403).send('Wrong login/password!');
   }
 });
 

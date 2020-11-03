@@ -30,8 +30,7 @@ const userSchema = new Schema(
     versionKey: false
   }
 );
-/* eslint space-before-function-paren: ["error", "never"]*/
-/* eslint-env es6*/
+
 userSchema.pre('save', async function(next) {
   this.password = await bcrypt.hash(this.password, 12);
 
